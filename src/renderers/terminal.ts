@@ -3,16 +3,15 @@
  * Minimalist cognitive load reduction.
  */
 
-import chalk from 'chalk';
 import path from 'node:path';
-import type { AnalysisReport } from '../models/index.js';
+import type { AnalysisReport } from '../types.js';
 
-const SEP = chalk.dim('━━━━━━━━━━━━━━━━━━━━');
+const SEP = '\x1b[90m━━━━━━━━━━━━━━━━━━━━\x1b[0m';
 const BLANK = '';
 
 function formatCategory(name: string, status: 'Modified' | 'Unchanged'): string {
-  const value = status === 'Modified' ? chalk.yellow('Modified') : chalk.dim('Unchanged');
-  return `${name}\n  ${value}`;
+  const value = status === 'Modified' ? '\x1b[33mModified\x1b[0m' : '\x1b[90mUnchanged\x1b[0m';
+  return `${name.padEnd(16)} ${value}`;
 }
 
 
@@ -25,15 +24,15 @@ export const terminalRenderer = {
     
     const lines: string[] = [
       BLANK,
-      chalk.bold.cyan('Cypher Inspect'),
+      `\x1b[1;36mCypher Inspect\x1b[0m`,
       BLANK,
-      chalk.bold('Repository Summary'),
+      `\x1b[1mRepository Summary\x1b[0m`,
       `${totalFiles} files changed`,
       SEP,
-      chalk.bold('Review Time'),
+      `\x1b[1mReview Time\x1b[0m`,
       `${report.reviewTimeMinutes} minute${report.reviewTimeMinutes === 1 ? '' : 's'}`,
       SEP,
-      chalk.bold('Files Worth Reading'),
+      `\x1b[1mFiles Worth Reading\x1b[0m`,
       `${filesToRead.length}`,
     ];
 
@@ -52,7 +51,7 @@ export const terminalRenderer = {
       formatCategory('Database', report.categories.database),
       formatCategory('Configuration', report.categories.configuration),
       SEP,
-      chalk.bold('Confidence'),
+      `\x1b[1mConfidence\x1b[0m`,
       `${report.confidenceScore}%`,
       BLANK
     );
@@ -61,7 +60,7 @@ export const terminalRenderer = {
     const hasAiContext = [...report.files.created, ...report.files.modified].some(f => f.explanation);
     if (hasAiContext) {
       lines.push(SEP);
-      lines.push(chalk.bold('AI Explanations'));
+      lines.push(`\x1b[1mAI Explanations\x1b[0m`);
       
       const allFiles = [...report.files.created, ...report.files.modified];
       for (const f of allFiles) {
@@ -69,7 +68,7 @@ export const terminalRenderer = {
           const fullPath = path.resolve(f.path).replace(/\\/g, '/');
           const basename = f.path.split('/').pop() || f.path;
           const link = `\x1b]8;;file://${fullPath}\x1b\\${basename}\x1b]8;;\x1b\\`;
-          lines.push(`${link} ${chalk.dim(f.explanation)}`);
+          lines.push(`${link} \x1b[90m${f.explanation}\x1b[0m`);
         }
       }
       lines.push(BLANK);

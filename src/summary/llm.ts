@@ -2,8 +2,7 @@ import type {
   AnalysisReport,
   CypherConfig,
   RepositorySnapshot,
-} from '../models/index.js';
-import { debug, createSpinner } from '../utils/logger.js';
+} from '../types.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -91,8 +90,7 @@ export async function enhanceReportWithLlm(
     return heuristicReport;
   }
 
-  const spinner = createSpinner('Generating AI context…').start();
-  debug(`Using AI Provider: ${config.apiProvider}`);
+  console.log('- Generating AI context…');
 
   try {
     const contextStr = buildContextString(snapshot);
@@ -103,7 +101,6 @@ export async function enhanceReportWithLlm(
     let parsed: LlmResponse;
 
     if (fs.existsSync(cachePath)) {
-      debug('Cache hit! Reading from 0-second cache.');
       parsed = JSON.parse(fs.readFileSync(cachePath, 'utf8'));
     } else {
       const prompt = `You are an expert Staff Engineer reviewing a Git Diff.
@@ -151,8 +148,6 @@ Only return raw JSON. No markdown backticks, no explanations.`;
       fs.writeFileSync(cachePath, JSON.stringify(parsed), 'utf8');
     }
 
-    spinner.stop();
-
     // Merge LLM explanations into the file lists
     const mapExplanations = (files: readonly any[]) => 
       files.map(f => ({ ...f, explanation: parsed.file_explanations?.[f.path] || f.explanation }));
@@ -167,8 +162,6 @@ Only return raw JSON. No markdown backticks, no explanations.`;
     };
 
   } catch (err) {
-    spinner.stop();
-    debug(`LLM Error: ${String(err)}`);
     return heuristicReport;
   }
 }

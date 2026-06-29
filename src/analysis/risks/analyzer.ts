@@ -5,7 +5,7 @@
 import type {
   RiskIssue,
   RepositorySnapshot,
-} from '../../models/index.js';
+} from '../../types.js';
 
 export interface RiskAnalysisResult {
   risks: RiskIssue[];
@@ -30,7 +30,7 @@ const RULES: readonly InlineRule[] = [
     severity: 'high',
     dirs: /(?:^|[\\/])(?:auth|authentication|login)[\\/]/i,
     files: /(?:auth|login|session|token|jwt|oauth|passport)/i,
-    keywords: [/password/i, /hash/i, /\bsalt\b/i, /bcrypt/i, /\bjwt\b/i, /\btoken\b/i, /\bsession\b/i, /\bcookie\b/i, /\bcsrf\b/i, /cors\s+origin/i, /authenticate/i, /authorize/i],
+    keywords: [/\bpassword\b/i, /\b(?:bcrypt|jwt).*hash\b/i, /\bhash(?:ed)?_?password\b/i, /\bsalt\b/i, /bcrypt/i, /\bjwt\b/i, /\b(?:jwt|auth|access|refresh|session)_?token\b/i, /\bsession\b/i, /\bcookie\b/i, /\bcsrf\b/i, /cors\s+origin/i, /authenticate/i, /authorize/i],
     msg: 'Auth-sensitive change'
   },
   {
@@ -39,7 +39,7 @@ const RULES: readonly InlineRule[] = [
     severity: 'high',
     dirs: /(?:^|[\\/])(?:db|database|migrations|schema)[\\/]/i,
     files: /(?:schema|migration|seed|model)/i,
-    keywords: [/\bSELECT\b/i, /\bUPDATE\b/i, /\bDELETE\b/i, /\bINSERT\b/i, /\bDROP\b/i, /\bALTER\b/i, /TypeORM/i, /Prisma/i, /Mongoose/i, /Sequelize/i],
+    keywords: [/\bSELECT\b/, /\bUPDATE\b/, /\bDELETE\b/, /\bINSERT\b/, /\bDROP\b/, /\bALTER\b/, /TypeORM/i, /Prisma/i, /Mongoose/i, /Sequelize/i],
     msg: 'Database schema or query change'
   },
   {
@@ -48,7 +48,7 @@ const RULES: readonly InlineRule[] = [
     severity: 'medium',
     dirs: /(?:^|[\\/])(?:config|env)[\\/]/i,
     files: /(?:\.env|config|secrets)/i,
-    keywords: [/process\.env/i, /apiKey/i, /secret/i, /password/i, /token/i],
+    keywords: [/process\.env/i, /\bapiKey\b/i, /\bsecret\b/i, /\bpassword\b/i, /\btoken\b/i],
     msg: 'Configuration/environment change'
   },
   {

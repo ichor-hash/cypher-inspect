@@ -1,46 +1,43 @@
 import type {
   AnalysisReport,
   CypherConfig,
-} from '../models/index.js';
+} from '../types.js';
 
 import { collectSnapshot } from '../git/collector.js';
 import { riskAnalyzer } from '../analysis/risks/analyzer.js';
 import { postGitHubComment } from '../renderers/github.js';
 import { enhanceReportWithLlm } from '../summary/llm.js';
 import { terminalRenderer } from '../renderers/terminal.js';
-import { createSpinner, debug, error, setVerbose } from '../utils/logger.js';
+
+let verboseMode = false;
+function debug(msg: string) { if (verboseMode) console.log(`\x1b[90m⋯ ${msg}\x1b[0m`); }
 
 export async function runPipeline(config: CypherConfig): Promise<{ output: string, report: AnalysisReport }> {
   const startTime = Date.now();
-  setVerbose(config.verbose);
+  verboseMode = config.verbose;
 
   debug(`Pipeline starting — diffBase: ${config.diffBase}`);
   debug(`Repository: ${config.repositoryPath}`);
 
-  const spinner = createSpinner('Collecting repository snapshot…').start();
+  console.log('- Collecting repository snapshot…');
   let snapshot;
   try {
     snapshot = await collectSnapshot(config.repositoryPath, config.diffBase);
   } catch (err) {
-    spinner.fail('Failed to collect repository snapshot.');
-    error(String(err));
+    console.error(`\x1b[31m✗\x1b[0m Failed to collect repository snapshot: ${String(err)}`);
     throw err;
   }
 
   if (snapshot.metadata.totalFilesChanged === 0) {
-    spinner.stop();
     const report = createEmptyReport(config, startTime);
     return { output: terminalRenderer.render(report), report };
   }
-  spinner.stop();
 
-  const analysisSpinner = createSpinner('Analyzing changes…').start();
+  console.log('- Analyzing changes…');
   
   // Inline the analysis passes. (No need for 4 separate analyzer objects).
   // Kept riskAnalyzer to house the regexes.
   const riskAnalysis = await riskAnalyzer.analyze(snapshot);
-  
-  analysisSpinner.stop();
 
   debug('Generating report…');
 

@@ -8,7 +8,9 @@
  * @module index
  */
 
-import { createProgram } from './cli/commands.js';
+import { runCLI } from './cli/commands.js';
 
-const program = createProgram();
-program.parse();
+runCLI().catch(err => {
+  console.error(`\x1b[31m✗\x1b[0m Fatal Error: ${String(err)}`);
+  process.exitCode = 1;
+});
