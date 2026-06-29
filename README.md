@@ -13,7 +13,7 @@ Git reveals what changed. Cypher Inspect reveals what matters.
 Execution requires zero configuration. Run this command inside any Git repository.
 
 ```bash
-npx @cypher/inspect
+npx cypher-inspect
 ```
 
 The auditor responds with a stark, deterministic truth:
@@ -54,7 +54,7 @@ export OPENAI_API_KEY="..."
 Following the export, invoke the auditor:
 
 ```bash
-npx @cypher/inspect --ai
+npx cypher-inspect --ai
 ```
 
 The system quietly supports `GROQ_API_KEY`, `GEMINI_API_KEY`, and `OPENROUTER_API_KEY`. It deduces the provider automatically. No further configuration is necessary.
@@ -64,7 +64,7 @@ The system quietly supports `GROQ_API_KEY`, `GEMINI_API_KEY`, and `OPENROUTER_AP
 The auditor is capable of standing guard over pull requests automatically. 
 
 ```bash
-npx @cypher/inspect --init
+npx cypher-inspect --init
 ```
 
 Executing this command places a `.github/workflows/cypher-inspect.yml` file into the repository. From that moment forward, every pull request is audited. If the confidence score drops below 80 percent, the continuous integration build will fail. It acts autonomously.

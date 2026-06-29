@@ -1,5 +1,5 @@
 {
-  "name": "@cypher/inspect",
+  "name": "cypher-inspect",
   "version": "0.1.0",
   "description": "Git Diff for AI — Understand what your AI coding assistant changed, why, and what to review.",
   "type": "module",
