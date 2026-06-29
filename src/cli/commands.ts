@@ -47,7 +47,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: npx cypher-inspect --ai
+      - run: npx -y cypher-inspect --ai
         env:
           GROQ_API_KEY: \${{ secrets.GROQ_API_KEY }}
           OPENAI_API_KEY: \${{ secrets.OPENAI_API_KEY }}
