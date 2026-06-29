@@ -49,6 +49,8 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - run: npx -y cypher-inspect --ai
         env:
           GROQ_API_KEY: \${{ secrets.GROQ_API_KEY }}
