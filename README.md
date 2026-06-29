@@ -27,6 +27,10 @@ Review Time
 ━━━━━━━━━━━━━━━━━━━━
 Files Worth Reading
 7
+
+src/auth/jwt.ts
+src/db/schema.sql
+package.json
 ━━━━━━━━━━━━━━━━━━━━
 Authentication
 Modified
