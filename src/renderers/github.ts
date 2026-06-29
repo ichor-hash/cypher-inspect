@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { stripVTControlCharacters } from 'node:util';
 import type { AnalysisReport } from '../types.js';
 import { terminalRenderer } from './terminal.js';
 
@@ -24,8 +25,7 @@ export async function postGitHubComment(report: AnalysisReport): Promise<void> {
     if (!repo) return;
 
     const rawOutput = terminalRenderer.render(report);
-    // Strip ANSI codes for markdown
-    const stripped = rawOutput.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, '');
+    const stripped = stripVTControlCharacters(rawOutput);
     const body = `## 🕵️‍♂️ Cypher Inspect Report\n\n\`\`\`text\n${stripped}\n\`\`\``;
 
     const url = `https://api.github.com/repos/${repo}/issues/${prNumber}/comments`;
