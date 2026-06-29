@@ -13,7 +13,7 @@ Built for developers using Claude Code, Cursor, Windsurf, Codex, Gemini CLI and 
 Run it inside any Git repository.
 
 ```bash
-npx @cypher/inspect
+npx cypher-inspect
 ```
 
 ## AI Explanations
@@ -29,7 +29,7 @@ export OPENAI_API_KEY="..."
 Then run:
 
 ```bash
-npx @cypher/inspect --ai
+npx cypher-inspect --ai
 ```
 
 Also supports:
@@ -44,7 +44,7 @@ Cypher Inspect automatically detects your provider.
 Generate a GitHub Actions workflow.
 
 ```bash
-npx @cypher/inspect --init
+npx cypher-inspect --init
 ```
 
 This creates:
