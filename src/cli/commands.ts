@@ -45,6 +45,8 @@ on: [pull_request]
 jobs:
   inspect:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
       - run: npx -y cypher-inspect --ai
@@ -76,8 +78,13 @@ jobs:
     }
   }
 
+  let diffBase = values.base as string;
+  if (diffBase === DEFAULT_CONFIG.diffBase && process.env.GITHUB_ACTIONS && process.env.GITHUB_EVENT_NAME === 'pull_request') {
+    diffBase = 'HEAD^1';
+  }
+
   const config: CypherConfig = {
-    diffBase: values.base as string,
+    diffBase,
     repositoryPath: resolve(values.path as string),
     verbose: values.verbose as boolean,
     ai: values.ai as boolean,
